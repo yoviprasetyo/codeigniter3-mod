@@ -73,4 +73,38 @@ class CI_Model {
 		return get_instance()->$key;
 	}
 
+	public function getById($id)
+    {
+        $query = $this->db->where(['id' => $id])->get($this->table);
+        if( count( $result = $query->result() ) ) {
+            return $result[0];
+        }
+    }
+
+    public function getAll()
+    {
+        $query = $this->db->get($this->table);
+        return $query->result();
+    }
+
+    public function insert(array $payload)
+    {
+        $this->db->insert($this->table, $payload);
+        $id = $this->db->insert_id();
+        $query = $this->db->where('id', $id)->get($this->table);
+        if( count($result = $query->result()) ) {
+            return $result[0];
+        }
+        return false;
+    }
+
+    public function delete($id)
+    {
+        return $this->db->delete($this->table, array('id' => $id));
+    }
+
+    public function update($id, $payload)
+    {
+        return $this->db->where('id', $id)->update($this->table, $payload);
+    }
 }

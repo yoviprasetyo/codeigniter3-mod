@@ -62,6 +62,8 @@ class CI_Parser {
 	 */
 	public $r_delim = '}';
 
+	protected $minify = false;
+
 	/**
 	 * Reference to CodeIgniter instance
 	 *
@@ -95,10 +97,10 @@ class CI_Parser {
 	 * @param	bool
 	 * @return	string
 	 */
-	public function parse($template, $data, $return = FALSE)
+	public function parse($template, $data, $return = FALSE, $minify = false)
 	{
 		$template = $this->CI->load->view($template, $data, TRUE);
-
+		$this->minify = $minify;
 		return $this->_parse($template, $data, $return);
 	}
 
@@ -153,6 +155,11 @@ class CI_Parser {
 
 		unset($data);
 		$template = strtr($template, $replace);
+		if( $this->minify === true ) {
+			$template = preg_replace('/\s{2,}/', '', $template);
+			$template = preg_replace('/\n+/', '', $template);
+			$template = preg_replace('/<!--\s*(.*?)\s*-->/', '', $template);
+		}
 
 		if ($return === FALSE)
 		{

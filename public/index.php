@@ -89,15 +89,6 @@ switch (ENVIRONMENT)
 		exit(1); // EXIT_ERROR
 }
 
-/**
- * Define the Directory Separator
- */
-define('DS', DIRECTORY_SEPARATOR);
-/**
- * Root Directory Name
- */
-$root = '..';
-
 /*
  *---------------------------------------------------------------
  * SYSTEM DIRECTORY NAME
@@ -105,8 +96,11 @@ $root = '..';
  *
  * This variable must contain the name of your "system" directory.
  * Set the path if it is not in the same directory as this file.
+ * This is Inosi Karya Indonesia mod
  */
-	$system_path = realpath( $root . DS . 'system' );
+ define('DS', DIRECTORY_SEPARATOR);
+ define('ROOTPATH', realpath(__DIR__ . DS . '..')); // Inosi Karya Indonesia mod
+	$system_path = ROOTPATH . DS . 'system';
 
 /*
  *---------------------------------------------------------------
@@ -123,7 +117,7 @@ $root = '..';
  *
  * NO TRAILING SLASH!
  */
-	$application_folder = realpath( $root . DS . 'application' );
+	$application_folder = ROOTPATH . DS . 'application';
 
 /*
  *---------------------------------------------------------------
