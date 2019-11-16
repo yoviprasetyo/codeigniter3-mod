@@ -8,6 +8,11 @@ class Tools extends CI_Controller
         $this->input->is_cli_request() or exit(":)");
     }
 
+    public function index()
+    {
+        return $this->list();
+    }
+
     public function list()
     {
         echo "List of Tools command:" . PHP_EOL . PHP_EOL;
