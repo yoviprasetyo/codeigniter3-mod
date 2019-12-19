@@ -87,6 +87,11 @@ class CI_Model {
         return $query->result();
     }
 
+    public function create(array $payload)
+    {
+        return $this->insert($payload);
+    }
+
     public function insert(array $payload)
     {
         $this->db->insert($this->table, $payload);

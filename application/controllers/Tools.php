@@ -186,4 +186,15 @@ class Tools extends CI_Controller
         fclose($modelFile);
         return true;
     }
+
+    public function seed()
+    {
+        $this->load->library(['seeder']);
+        try {
+            $this->seeder->run();
+            echo "Seeding completed" . PHP_EOL;
+        } catch (\Exception $e) {
+            echo "An error has occured " . $e->getMessage() . PHP_EOL;
+        } 
+    }
 }
