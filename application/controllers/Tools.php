@@ -24,9 +24,10 @@ class Tools extends CI_Controller
         echo "   -- to make a migration." . PHP_EOL . PHP_EOL;
         echo "4. migrate [reset]" . PHP_EOL;
         echo "   -- to run migration. [reset] to run migration from the beginning." . PHP_EOL . PHP_EOL;
-        echo "5. list" . PHP_EOL;
+        echo "5. seed" . PHP_EOL;
+        echo "   -- to run the seeder. Seeder available on application/libraries/Seeder.php" . PHP_EOL . PHP_EOL;
+        echo "6. list" . PHP_EOL;
         echo "   -- you currently run the command." . PHP_EOL . PHP_EOL;
-        
     }
 
     public function migrate(...$argc)
@@ -41,13 +42,6 @@ class Tools extends CI_Controller
         }
         if ( $this->migration->latest() ) {
             echo "Success migrate" . PHP_EOL;
-            foreach ($argc as $string) {
-                if( $string == '--seed' ) {
-                    // $this->migration->version("0");
-                    echo "Success make seeder" . PHP_EOL;
-                    break;
-                }
-            }
         } else {
             show_error($this->migration->error_string());
         }
