@@ -17,4 +17,9 @@ class User extends CI_Model
         }
         return false;
     }
+
+    public function role()
+    {
+        return $this->belongsTo('Role', 'role_id');
+    }
 }

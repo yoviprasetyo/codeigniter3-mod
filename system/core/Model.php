@@ -76,7 +76,7 @@ class CI_Model {
 	public function getById($id)
     {
         $query = $this->db->where(['id' => $id])->get($this->table);
-        if( count( $result = $query->result() ) ) {
+        if( count( $result = $query->result( get_called_class() ) ) ) {
             return $result[0];
         }
     }
@@ -106,5 +106,48 @@ class CI_Model {
     public function update($id, $payload)
     {
         return $this->db->where('id', $id)->update($this->table, $payload);
+    }
+
+    /**
+     * Relationship belongs to other Model 
+     * 
+     * @param string $instance
+     * @param string $foreignKey
+     * @param string $id
+     * 
+     * @return mixed
+     */
+    public function belongsTo($instance, $foreignKey, $id = 'id')
+    {
+        $instance = strtolower($instance);
+        if( empty( $this->$instance ) ) {
+            $this->load->model($instance);
+        }
+        $query = $this->db->where($id, $this->$foreignKey)->get($this->$instance->table);
+        if( count( $result = $query->result( get_class($this->$instance) ) ) ) {
+            return $result[0];
+        }
+    }
+
+    /**
+     * Relationship has many other Model 
+     * 
+     * @param string $instance
+     * @param string $foreignKey
+     * @param string $id
+     * 
+     * @return mixed
+     */
+    public function hasMany($instance, $foreignKey, $id = 'id')
+    {
+        $instance = strtolower($instance);
+        if( empty($this->$instance) ) {
+            $this->load->model($instance);
+        }
+        $query = $this->db->where($foreignKey, $this->$id)->get($this->$instance->table);
+        if( count( $result = $query->result( get_class($this->$instance) ) ) ) {
+            return $result;
+        }
+        return false;
     }
 }
