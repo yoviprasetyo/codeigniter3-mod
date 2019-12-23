@@ -118,16 +118,11 @@ class Tools extends CI_Controller
         $checkName = $this->checkMigrationName($argc);
         $controllerFile = fopen( $migrationPath . DS . $timestamp . '_' . $argc[0] . ".php", "w") or die("Unable to open file!");
         $content = "<?php\n\nclass Migration_" . ucfirst($argc[0]) . " extends CI_Migration\n{\n";
-        if( $checkName['function'] == 'create' ) {
             $content .= "\n    public function up()\n    {\n";
-            $content .= "        \$this->dbforge->add_field([\n            'id' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true]\n            ]);\n";
-            $content .= "        \$this->dbforge->add_key('id', true);\n";
-            $content .= "        \$this->dbforge->create_table('".$checkName['name']."');\n";
             $content .= "    }\n";
             $content .= "\n    public function down()\n    {\n";
             $content .= "        \$this->dbforge->drop_table('".$checkName['name']."');\n";
             $content .= "    }\n";
-        }
         $content .= "}";
         fwrite($controllerFile, $content);
         fclose($controllerFile);
@@ -135,9 +130,7 @@ class Tools extends CI_Controller
 
     private function checkMigrationName($argc)
     { 
-        if( count($argc) > 1 ) {
-
-        } else {
+        if( count($argc) <= 1 ) {
             $explode = explode("_", $argc[0]);
             if( count($explode) >= 3 ) {
                 $lastIndex = count($explode) - 1;
