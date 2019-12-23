@@ -1,10 +1,12 @@
 # Codeigniter 3 MOD
+Just another version of Codeigniter with (maybe) silly modification (but in my case works).
 
 ## Description
 This is Codeigniter 3 with modification. The addition feature list:
 1. Tools like artisan in Laravel: Make Models, Controller, Migration, and run Seeder is available
 2. The database.php.example and config.php.example to keep database.php and config.php safe
 3. Add belongsTo and hasMany in the system/core/Model.php to add deal with relationship
+4. File index.php on the public/ directory
 
 ## Installation
 1. Clone this repo
