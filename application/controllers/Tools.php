@@ -118,10 +118,10 @@ class Tools extends CI_Controller
         $checkName = $this->checkMigrationName($argc);
         $controllerFile = fopen( $migrationPath . DS . $timestamp . '_' . $argc[0] . ".php", "w") or die("Unable to open file!");
         $content = "<?php\n\nclass Migration_" . ucfirst($argc[0]) . " extends CI_Migration\n{\n";
-            $content .= "\n    public function up()\n    {\n";
+            $content .= "\n    public function up()\n    {\n\n        //\n";
             $content .= "    }\n";
             $content .= "\n    public function down()\n    {\n";
-            $content .= "        \$this->dbforge->drop_table('".$checkName['name']."');\n";
+            $content .= "        //\n";
             $content .= "    }\n";
         $content .= "}";
         fwrite($controllerFile, $content);
