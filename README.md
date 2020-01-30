@@ -10,11 +10,12 @@ This is Codeigniter 3 with modification. The addition feature list:
 
 ## Installation
 1. Clone this repo
-2. Copy database.php.example to database.php and set the DB of your own
-3. Copy config.php.example to config.php and set the Config of your own
+2. Copy /application/config/database.php.example to /application/config/database.php and set the DB of your own
+3. Copy /application/config/config.php.example to /application/config/config.php and set the Config of your own
+4. Copy /public/preconfig.php.example to /public/preconfig.php then set your root path folder and environment
 
 ## Tools
 After installation, you can use the tools with this command
-```php public/index.php tools [argument]```
+```php tools [argument]```
 to see the available argument just run 
-```php public/index.php tools```
+```php tools``` or ```php tools list```
