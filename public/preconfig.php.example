@@ -1,0 +1,8 @@
+<?php
+
+defined('DS') or exit();
+
+return [
+    'rootpath' => realpath(__DIR__ . DS . '..'),
+    'environment' => 'development',
+];
