@@ -53,7 +53,15 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	define('DS', DIRECTORY_SEPARATOR);
+	$rootpath = __DIR__ . DS . '..';
+	if( file_exists( realpath(__DIR__ . DS . 'preconfig.php') ) ) {
+		$rootVar = require('preconfig.php');
+		$rootpath = $rootVar['rootpath'];
+		$environment = $rootVar['environment'];
+	}
+
+	define('ENVIRONMENT', ( ! empty($environment) ) ? $environment : 'development');
 
 /*
  *---------------------------------------------------------------
@@ -98,8 +106,7 @@ switch (ENVIRONMENT)
  * Set the path if it is not in the same directory as this file.
  * This is Inosi Karya Indonesia mod
  */
- define('DS', DIRECTORY_SEPARATOR);
- define('ROOTPATH', realpath(__DIR__ . DS . '..')); // Inosi Karya Indonesia mod
+	define('ROOTPATH', $rootpath);
 	$system_path = ROOTPATH . DS . 'system';
 
 /*
