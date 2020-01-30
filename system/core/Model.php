@@ -103,14 +103,22 @@ class CI_Model {
         return false;
     }
 
-    public function delete($id)
+    public function delete()
     {
-        return $this->db->delete($this->table, array('id' => $id));
+        if( $this instanceof CI_Model
+            AND isset($this->id) ) {
+            return $this->delete($this->table, array('id' => $this->id));
+        }
+        return false;
     }
 
-    public function update($id, $payload)
+    public function update($payload)
     {
-        return $this->db->where('id', $id)->update($this->table, $payload);
+        if( $this instanceof CI_Model 
+            AND isset($this->id) ) {
+            return $this->db->where('id', $this->id)->update($this->table, $payload);
+        }
+        return false;
     }
 
     /**
@@ -124,7 +132,6 @@ class CI_Model {
      */
     public function belongsTo($instance, $foreignKey, $id = 'id')
     {
-        $instance = strtolower($instance);
         if( empty( $this->$instance ) ) {
             $this->load->model($instance);
         }
@@ -132,6 +139,7 @@ class CI_Model {
         if( count( $result = $query->result( get_class($this->$instance) ) ) ) {
             return $result[0];
         }
+        return false;
     }
 
     /**
@@ -145,13 +153,15 @@ class CI_Model {
      */
     public function hasMany($instance, $foreignKey, $id = 'id')
     {
-        $instance = strtolower($instance);
         if( empty($this->$instance) ) {
             $this->load->model($instance);
         }
-        $query = $this->db->where($foreignKey, $this->$id)->get($this->$instance->table);
-        if( count( $result = $query->result( get_class($this->$instance) ) ) ) {
-            return $result;
+        if( $this instanceof CI_Model 
+            AND ! empty($this->id) ) {
+            $query = $this->db->where($foreignKey, $this->id)->from($this->$instance->table)->get();
+            if( count( $result = $query->result( get_class($this->$instance) ) ) ) {
+                return $result;
+            }
         }
         return false;
     }
