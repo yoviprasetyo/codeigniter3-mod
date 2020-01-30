@@ -1,0 +1,15 @@
+<?php
+$arguments = $_SERVER['argv'];
+$key = 0;
+foreach($arguments as $argument) {
+    if( $key == 1 ) {
+        $_SERVER['argv'][$key] = 'tools';
+        $key++;
+    }
+    $_SERVER['argv'][$key] = $argument;
+    $key++;
+}
+if( count($arguments) == 1 ) {
+    $_SERVER['argv'][1] = 'tools';
+}
+require 'public/index.php';
