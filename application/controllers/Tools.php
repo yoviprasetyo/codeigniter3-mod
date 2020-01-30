@@ -80,7 +80,8 @@ class Tools extends CI_Controller
                         $this->makeModel($modelPath, $argc);
                         foreach ($argc as $string) {
                             if( $string == '-m' OR $string == '--migration' ) {
-                                $this->make('migration', 'create_' . strtolower($argc[0]) . 's_table');
+                                $tableName = $this->generateTableName($argc[0]);
+                                $this->make('migration', 'create_' . $tableName . '_table');
                                 break;
                             }
                         }
@@ -92,6 +93,25 @@ class Tools extends CI_Controller
                 # code...
                 break;
         }
+    }
+
+    private function generateTableName($string)
+    {
+        $return = '';
+        if( strlen($string) > 1 ) {
+            for ($i=0; $i < strlen($string); $i++) { 
+                $a = $string[$i];
+                if( $i != 0 AND preg_match("/[A-Z]+/", $a, $output) ) {
+                    $return .= "_";
+                }
+                if( $i == (strlen($string) - 1) AND $a == 'y' ) {
+                    $a = 'ie';
+                }
+                $return .= $a;
+            }
+            $return .= 's';
+        }
+        return strtolower($return);
     }
 
     private function makeController($controllerPath, $argc)
@@ -118,10 +138,25 @@ class Tools extends CI_Controller
         $checkName = $this->checkMigrationName($argc);
         $controllerFile = fopen( $migrationPath . DS . $timestamp . '_' . $argc[0] . ".php", "w") or die("Unable to open file!");
         $content = "<?php\n\nclass Migration_" . ucfirst($argc[0]) . " extends CI_Migration\n{\n";
-            $content .= "\n    public function up()\n    {\n\n        //\n";
+            $content .= "\n    public function up()\n    {\n\n";
+            if( $checkName !== false 
+                AND isset( $checkName['function'] ) 
+                AND $checkName['function'] == 'create' ) {
+                    $content .= "        \$this->dbforge->add_field([\n            'id' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true]\n            ]);\n";
+                    $content .= "        \$this->dbforge->add_key('id', true);\n";
+                    $content .= "        \$this->dbforge->create_table('".$checkName['name']."');\n";
+            } else {
+                $content .= "        //\n";
+            }
             $content .= "    }\n";
             $content .= "\n    public function down()\n    {\n";
-            $content .= "        //\n";
+            if( $checkName !== false
+                AND isset( $checkName['function'] ) 
+                AND $checkName['function'] == 'create' ) {
+                    $content .= "        \$this->dbforge->drop_table('".$checkName['name']."');\n";
+                } else {
+                    $content .= "        //\n";
+                }
             $content .= "    }\n";
         $content .= "}";
         fwrite($controllerFile, $content);
@@ -136,14 +171,12 @@ class Tools extends CI_Controller
                 $lastIndex = count($explode) - 1;
                 if( strtolower($explode[0]) == 'create' AND strtolower($explode[$lastIndex]) == 'table' ) {
                     unset($explode[0]); unset($explode[$lastIndex]);
-                    $name = '';
-                    foreach ($explode as $string) {
-                        $name .= strtolower($string);
-                    }
+                    $name = implode('_', $explode);
                     return ['function' => 'create', 'type' => 'table', 'name' => trim($name)];
                 }
             }
         }
+        return false;
     }
 
     private function makeMethod($name)
@@ -155,10 +188,14 @@ class Tools extends CI_Controller
         return $string;
     }
 
-    private function makeModel($modelPath, $argc)
+    private function makeModel($modelPath, $argc, $table = '')
     {
         $modelFile = fopen( $modelPath . DS . $argc[0] . ".php", "w") or die("Unable to open file!");
         $content = "<?php\n\nclass " . $argc[0] . " extends CI_Model\n{\n";
+        if( $table == '' ) {
+            $table = $this->generateTableName($argc[0]);
+        }
+        $content .= "    protected \$table = \"" . $table . "\";\n    ";
         if( count($argc) > 1 ) {
             foreach ($argc as $key => $method) {
                 if( $key != 0 ) {
